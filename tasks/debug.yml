@@ -1,0 +1,17 @@
+- name: Ensure we're running as trev user
+  command: whoami
+  register: whoami_output
+  become_user: trev
+
+- name: Debug whoami
+  debug:
+    msg: "Current user is: {{ whoami_output.stdout }}"
+
+- name: Debug working directory
+  command: pwd
+  register: pwd_output
+  become_user: trev
+
+- name: Debug pwd
+  debug:
+    msg: "Current directory is: {{ pwd_output.stdout }}"
