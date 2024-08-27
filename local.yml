@@ -1,5 +1,7 @@
+# ansible-playbook -vvv local.yml --ask-vault-pass
 - hosts: localhost
-  become: true
+  # become: true
   tasks:
     - include_tasks: tasks/zsh.yml
     - include_tasks: tasks/node.yml
+    - include_tasks: tasks/ssh.yml

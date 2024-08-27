@@ -1,5 +1,4 @@
 # Dockerfile for testing ansible script
-
 FROM ubuntu:focal AS base
 WORKDIR /usr/local/bin
 ENV DEBIAN_FRONTEND=noninteractive
@@ -27,8 +26,20 @@ RUN addgroup --gid 1000 developers && \
 
 # Switch to the trev user
 USER trev
-WORKDIR /home/trev
+WORKDIR /home/trev/ansible
 
 FROM usersetup
 COPY . .
-CMD ["sh", "-c", "ansible-playbook $TAGS local.yml && exec zsh"]
+
+
+RUN sudo chown -R trev:developers /home/trev/ansible/.ssh && \
+    sudo chmod 600 /home/trev/ansible/.ssh/id_rsa && \
+    sudo chmod 644 /home/trev/ansible/.ssh/id_rsa.pub
+
+
+# ENV ANSIBLE_VAULT_PASSWORD_FILE="/home/trev/.vault_pass"
+
+# # Add a command to write the vault password to a file
+# CMD echo "$VAULT_PASS" > $ANSIBLE_VAULT_PASSWORD_FILE && \
+#   ansible-playbook $TAGS --vault-password-file $ANSIBLE_VAULT_PASSWORD_FILE local.yml && \
+#   exec zsh
