@@ -1,7 +1,8 @@
 - name: Install nvm
-  become_user: trev
+  become: true
+  become_user: "{{ current_user }}"
   ansible.builtin.shell: |
-    export HOME=/home/trev
+    export HOME="/home/{{ current_user }}"
     export NVM_DIR="$HOME/.nvm"
     mkdir -p $NVM_DIR
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.1/install.sh | bash
@@ -10,20 +11,34 @@
     echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.zshrc
   args:
     executable: /bin/bash
-    chdir: "/home/trev"
-    creates: "/home/trev/.nvm/nvm.sh"
+    chdir: "/home/{{ current_user }}"
+    creates: "/home/{{ current_user }}/.nvm/nvm.sh"
   environment:
-    HOME: /home/trev
+    HOME: "/home/{{ current_user }}"
 
 - name: Install node
-  become_user: trev
+  become: true
+  become_user: "{{ current_user }}"
   shell: |
-    . /home/trev/.nvm/nvm.sh && nvm install {{ item }}
+    . /home/{{ current_user }}/.nvm/nvm.sh && nvm install {{ item }}
   args:
     executable: /bin/bash
-    chdir: "/home/trev"
-    creates: "/home/trev/.nvm/versions/{{ item }}"
+    chdir: "/home/{{ current_user }}"
+    creates: "/home/{{ current_user }}/.nvm/versions/node/v{{ item }}"
   loop:
     - 20.10.0
   environment:
-    HOME: /home/trev
+    HOME: "/home/{{ current_user }}"
+
+- name: Set default node version
+  become: true
+  become_user: "{{ current_user }}"
+  shell: |
+    . /home/{{ current_user }}/.nvm/nvm.sh && nvm alias default {{ item }}
+  args:
+    executable: /bin/bash
+    chdir: "/home/{{ current_user }}"
+  loop:
+    - 20.10.0
+  environment:
+    HOME: "/home/{{ current_user }}"

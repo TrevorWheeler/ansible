@@ -33,6 +33,7 @@ COPY . .
 
 
 RUN sudo chown -R trev:developers /home/trev/ansible/.ssh && \
+    sudo chmod 700 /home/trev/ansible/.ssh && \
     sudo chmod 600 /home/trev/ansible/.ssh/id_rsa && \
     sudo chmod 644 /home/trev/ansible/.ssh/id_rsa.pub
 

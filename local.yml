@@ -1,7 +1,11 @@
-# ansible-playbook -vvv local.yml --ask-vault-pass
 - hosts: localhost
-  # become: true
+  vars:
+    current_user: trev
+    current_group: developers
+    source_key: "./.ssh/id_rsa"
+    dest_key: "/home/{{ current_user }}/.ssh/id_rsa"
+  become: true
   tasks:
+    - include_tasks: tasks/ssh.yml
     - include_tasks: tasks/zsh.yml
     - include_tasks: tasks/node.yml
-    - include_tasks: tasks/ssh.yml
