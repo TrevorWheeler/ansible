@@ -1,0 +1,21 @@
+- name: Ensure unzip is installed
+  apt:
+    name: unzip
+    name: zip
+    state: present
+  become: yes
+
+- name: Install SDKMAN! and verify installation
+  shell: |
+    curl -s "https://get.sdkman.io" | bash
+    source "$HOME/.sdkman/bin/sdkman-init.sh"
+    sdk version
+  args:
+    executable: /bin/bash
+  register: sdkman_version_output
+  become: yes
+  become_user: "{{ current_user }}"
+
+- name: Display SDKMAN version
+  debug:
+    msg: "{{ sdkman_version_output.stdout }}"
