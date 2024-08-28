@@ -1,10 +1,4 @@
 - hosts: localhost
-  vars:
-    current_user: trev
-    current_group: developers
-    source_key: "./.ssh/id_rsa"
-    dest_key: "/home/{{ current_user }}/.ssh/id_rsa"
-  become: true
   tasks:
     - include_tasks: tasks/ssh.yml
     - include_tasks: tasks/zsh.yml

@@ -14,7 +14,7 @@
     executable: /bin/bash
   register: sdkman_version_output
   become: yes
-  become_user: "{{ current_user }}"
+  become_user: "{{ ansible_user_id }}"
 
 - name: Display SDKMAN version
   debug:

@@ -1,47 +1,29 @@
-- name: Set the current user fact
-  set_fact:
-    current_user: "trev"
-
-- name: Set the current group fact
-  set_fact:
-    current_group: "developers"
-
 - name: Ensure .ssh directory exists for current user
   file:
-    path: "/home/{{ current_user }}/.ssh"
+    path: "{{ ansible_env.HOME }}/.ssh"
     state: directory
     mode: '0700'
-    owner: "{{ current_user }}"
-    group: "{{ current_group }}"
-  become: true
 
 - name: Copy SSH public key to the .ssh folder for current user
   copy:
     src: "{{ playbook_dir }}/.ssh/id_rsa.pub"
-    dest: "/home/{{ current_user }}/.ssh/id_rsa.pub"
+    dest: "{{ ansible_env.HOME }}/.ssh/id_rsa.pub"
     mode: '0644'
-    owner: "{{ current_user }}"
-    group: "{{ current_group }}"
-  become: true
 
 - name: Copy SSH private key to the .ssh folder for current user
   copy:
     src: "{{ playbook_dir }}/.ssh/id_rsa"
-    dest: "/home/{{ current_user }}/.ssh/id_rsa"
+    dest: "{{ ansible_env.HOME }}/.ssh/id_rsa"
     mode: '0600'
-    owner: "{{ current_user }}"
-    group: "{{ current_group }}"
     decrypt: yes
-  become: true
 
 - name: Debug current user and group
   debug:
-    msg: "Current user: {{ current_user }}, Current group: {{ current_group }}"
+    msg: "Current user: {{ ansible_user_id }}, Current group: {{ ansible_user_gid }}"
 
 - name: Debug SSH directory contents
-  shell: ls -la /home/{{ current_user }}/.ssh
+  shell: ls -la {{ ansible_env.HOME }}/.ssh
   register: ssh_contents
-  become: true
 
 - name: Display SSH directory contents
   debug:

@@ -3,36 +3,29 @@
     name: zsh
     state: present
   become: true
-  tags: &tags_for_zsh_tasks
-    - install
-    - productivity
-    - dotfiles
-    - zsh
 
 - name: Change shell to zsh
   user:
-    name: "{{ current_user }}"
+    name: "{{ ansible_user_id }}"
     shell: /usr/bin/zsh
   become: true
-  tags: *tags_for_zsh_tasks
 
 - name: Check that the .oh-my-zsh directory exists
   stat:
-    path: "/home/{{ current_user }}/.oh-my-zsh"
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
   register: oh_my_stats
-  tags: *tags_for_zsh_tasks
 
 - name: Install Oh-My-Zsh
   shell: |
-    su - {{ current_user }} -c 'curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh'
-  tags: *tags_for_zsh_tasks
-  when: oh_my_stats.stat.exists == False
+    curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh
   become: true
+  become_user: "{{ ansible_user_id }}"
+  args:
+    executable: /bin/bash
 
 - name: Install zsh-autosuggestions
   ansible.builtin.git:
     repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
-    dest: "/home/{{ current_user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
-  tags: *tags_for_zsh_tasks
-  become: true
-  become_user: "{{ current_user }}"
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+  # become: true
+  become_user: "{{ ansible_user_id }}"

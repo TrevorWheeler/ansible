@@ -12,57 +12,57 @@
   shell: |
     curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
   args:
-    creates: "/home/{{ current_user }}/.g/bin/g"
+    creates: "{{ ansible_env.HOME }}/.g/bin/g"
   become: yes
-  become_user: "{{ current_user }}"
+  become_user: "{{ ansible_user_id }}"
 
 - name: Add 'g' initialization to .bashrc
   lineinfile:
-    path: "/home/{{ current_user }}/.bashrc"
-    line: 'source "/home/{{ current_user }}/.g/env"'
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'source "{{ ansible_env.HOME }}/.g/env"'
     state: present
   become: yes
-  become_user: "{{ current_user }}"
+  become_user: "{{ ansible_user_id }}"
 
 - name: Add 'g' initialization to .zshrc (if exists)
   lineinfile:
-    path: "/home/{{ current_user }}/.zshrc"
-    line: 'source "/home/{{ current_user }}/.g/env"'
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'source "{{ ansible_env.HOME }}/.g/env"'
     state: present
   become: yes
-  become_user: "{{ current_user }}"
+  become_user: "{{ ansible_user_id }}"
   ignore_errors: yes
 
 - name: Get latest stable Go version
   shell: |
-    source "/home/{{ current_user }}/.g/env"
+    source "{{ ansible_env.HOME }}/.g/env"
     g ls-remote stable | tail -n 1
   args:
     executable: /bin/bash
   register: go_latest_version
   become: yes
-  become_user: "{{ current_user }}"
+  become_user: "{{ ansible_user_id }}"
 
 - name: Install latest stable Go version using 'g'
   shell: |
-    source "/home/{{ current_user }}/.g/env"
+    source "{{ ansible_env.HOME }}/.g/env"
     g install {{ go_latest_version.stdout }}
     g use {{ go_latest_version.stdout }}
   args:
     executable: /bin/bash
   become: yes
-  become_user: "{{ current_user }}"
+  become_user: "{{ ansible_user_id }}"
 
 - name: Verify Go installation
   shell: |
-    source "/home/{{ current_user }}/.g/env"
+    source "{{ ansible_env.HOME }}/.g/env"
     go version
   args:
     executable: /bin/bash
   register: go_version
   changed_when: false
   become: yes
-  become_user: "{{ current_user }}"
+  become_user: "{{ ansible_user_id }}"
 
 - name: Display installed Go version
   debug:
